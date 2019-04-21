@@ -4,9 +4,9 @@
     name: create_instance_gce
   with_sequence: start=1 end={{ masters_qty }} format=master-%d
   vars:
-    machine_type: "n1-standard-4"
+    machine_type: "{{  master_machine_type }}"
     prefix: "master"
-    docker_size: 40
+    docker_size: "{{ docker_storage_size }}"
     docker_storage: true
   when: masters
 
@@ -15,9 +15,9 @@
     name: create_instance_gce
   with_sequence: start=1 end={{ infra_qty }} format=infra-%d
   vars:
-    machine_type: "n1-standard-4"
+    machine_type: "{{ infra_machine_type }}"
     prefix: "infra"
-    docker_size: 20
+    docker_size: "{{ docker_storage_size }}"
     docker_storage: true
   when: infra
 
@@ -26,9 +26,9 @@
     name: create_instance_gce
   with_sequence: start=1 end={{ node_qty }} format=node-%d
   vars:
-    machine_type: "n1-standard-4"
+    machine_type: "{{ node_machine_type }}"
     prefix: "node"
-    docker_size: 40
+    docker_size: "{{ docker_storage_size }}"
     docker_storage: true
   when: nodes
 
@@ -37,12 +37,12 @@
     name: create_instance_gce
   with_sequence: start=1 end={{ storage_qty }} format=storage-%d
   vars:
-    machine_type: "n1-standard-4"
+    machine_type: "{{ gluster_machine_type }}"
     prefix: "storage"
     docker_storage: true
-    docker_size: 40
+    docker_size: "{{ docker_storage_size }}"
     gluster_storage: true
-    gluster_size: 50
+    gluster_size: "{{ gluster_storage_size }}"
   when: storage
 
 - name: "Create Master Load Balancer Instance"
@@ -50,7 +50,7 @@
     name: create_instance_gce
   with_sequence: start=1 end={{ master_lb_qty }} format=master-lb-%d
   vars:
-    machine_type: "n1-standard-4"
+    machine_type: "{{ lb_machine_type }}"
     prefix: "master_lb"
     external_ip: "{{ master_lb_external_ip }}"
   when: master_lb
@@ -60,7 +60,7 @@
     name: create_instance_gce
   with_sequence: start=1 end={{ infra_lb_qty }} format=infra-lb-%d
   vars:
-    machine_type: "n1-standard-4"
+    machine_type: "{{ lb_machine_type }}"
     external_ip: "{{ infra_lb_external_ip }}"
     prefix: "infra_lb"
   when: infra_lb
@@ -70,7 +70,7 @@
     name: create_instance_gce
   with_sequence: start=1 end={{ bastion_qty }} format=bastion-%d
   vars:
-    machine_type: "n1-standard-4"
+    machine_type: "{{ bastion_machine_type }}"
     prefix: "bastion"
     docker_storage: false
     gluster_storage: false
